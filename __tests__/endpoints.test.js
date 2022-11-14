@@ -14,12 +14,39 @@ describe("/api/topics", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.topics).toEqual(expect.any(Array));
-        if (response.body.topics.length > 0) {
-          for (let i = 0; i < response.body.topics.length; i++) {
-            expect(Object.keys(response.body.topics[i])).toEqual(
-              expect.arrayContaining(["slug", "description"])
-            );
-          }
+        expect(response.body.topics).not.toHaveLength(0);
+        for (let i = 0; i < response.body.topics.length; i++) {
+          expect(Object.keys(response.body.topics[i])).toEqual(
+            expect.arrayContaining(["slug", "description"])
+          );
+        }
+      });
+  });
+});
+
+describe("/api/articles", () => {
+  test("GET:200, an array of article objects, with the correct properties", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toEqual(expect.any(Array));
+        expect(response.body.articles).not.toHaveLength(0);
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        for (let i = 0; i < response.body.articles.length; i++) {
+          expect(Object.keys(response.body.articles[i])).toEqual(
+            expect.arrayContaining([
+              "author",
+              "title",
+              "article_id",
+              "topic",
+              "created_at",
+              "votes",
+              "comment_count",
+            ])
+          );
         }
       });
   });
