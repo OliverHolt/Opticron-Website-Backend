@@ -14,15 +14,22 @@ describe("/api/topics", () => {
       .expect(200)
       .then((response) => {
         expect(response.body.topics).toEqual(expect.any(Array));
-        expect(Object.keys(response.body.topics[0])).toEqual(
-          expect.arrayContaining(["slug", "description"])
-        );
+        if (response.body.topics.length > 0) {
+          for (let i = 0; i < response.body.topics.length; i++) {
+            expect(Object.keys(response.body.topics[i])).toEqual(
+              expect.arrayContaining(["slug", "description"])
+            );
+          }
+        }
       });
   });
-  test("GET:400, sends an appropriate error message when given an bad request", () => {
+});
+
+describe("api/nonsense", () => {
+  test("GET:404, sends an appropriate error message when given an invalid route", () => {
     return request(app)
       .get("/api/nonsense")
-      .expect(400)
+      .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("Route not found!");
       });
