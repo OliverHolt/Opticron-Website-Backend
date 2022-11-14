@@ -7,7 +7,7 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 
 app.all("*", (req, res) => {
-  res.status(400).send({ msg: "route not found" });
+  res.status(400).send({ msg: "Route not found!" });
 });
 
 module.exports = app;

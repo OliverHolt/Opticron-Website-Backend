@@ -19,4 +19,12 @@ describe("/api/topics", () => {
         );
       });
   });
+  test("GET:400, sends an appropriate error message when given an bad request", () => {
+    return request(app)
+      .get("/api/nonsense")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Route not found!");
+      });
+  });
 });
