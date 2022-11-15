@@ -52,7 +52,7 @@ describe("/api/articles", () => {
   });
 });
 
-describe.only("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id", () => {
   test("GET:200, responds with an array of articles matching given article_id", () => {
     return request(app)
       .get("/api/articles/1")
@@ -72,12 +72,20 @@ describe.only("/api/articles/:article_id", () => {
         });
       });
   });
-  test("GET: 404, sends an appropriate error message when given an invalid article_id", () => {
+  test("GET: 404, sends an appropriate error message when given a non-existent article_id", () => {
     return request(app)
       .get("/api/articles/99999")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("article not found!");
+      });
+  });
+  test("GET: 400, sends an appropriate error message when given an invalid article_id", () => {
+    return request(app)
+      .get("/api/articles/not-an-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
