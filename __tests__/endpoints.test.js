@@ -2,7 +2,7 @@ const app = require("../app.js");
 const request = require("supertest");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
-const allData = require("../db/data/test-data");
+const allData = require("../db/data/test-data/index.js");
 
 beforeEach(() => seed(allData));
 afterAll(() => db.end());
@@ -15,11 +15,11 @@ describe("/api/topics", () => {
       .then((response) => {
         expect(response.body.topics).toEqual(expect.any(Array));
         expect(response.body.topics).not.toHaveLength(0);
-        for (let i = 0; i < response.body.topics.length; i++) {
-          expect(Object.keys(response.body.topics[i])).toEqual(
+        response.body.topics.forEach((topic) => {
+          expect(Object.keys(topic)).toEqual(
             expect.arrayContaining(["slug", "description"])
           );
-        }
+        });
       });
   });
 });
@@ -35,8 +35,8 @@ describe("/api/articles", () => {
         expect(response.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
-        for (let i = 0; i < response.body.articles.length; i++) {
-          expect(Object.keys(response.body.articles[i])).toEqual(
+        response.body.articles.forEach((article) => {
+          expect(Object.keys(article)).toEqual(
             expect.arrayContaining([
               "author",
               "title",
@@ -47,7 +47,7 @@ describe("/api/articles", () => {
               "comment_count",
             ])
           );
-        }
+        });
       });
   });
 });
