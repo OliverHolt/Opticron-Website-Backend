@@ -120,7 +120,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toEqual([]);
       });
   });
-  test("GET: 404, sends an appropriate error message when given a non-existent article_id", () => {
+  test("GET:404, sends an appropriate error message when given a non-existent article_id", () => {
     return request(app)
       .get("/api/articles/99999/comments")
       .expect(404)
@@ -128,7 +128,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article not found!");
       });
   });
-  test("GET: 400, sends an appropriate error message when given an invalid article_id", () => {
+  test("GET:400, sends an appropriate error message when given an invalid article_id", () => {
     return request(app)
       .get("/api/articles/not-an-id/comments")
       .expect(400)
@@ -149,7 +149,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comment).toMatchObject({
           comment_id: expect.any(Number),
           body: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 1,
           author: expect.any(String),
           votes: expect.any(Number),
           created_at: expect.any(String),
@@ -176,7 +176,7 @@ describe("/api/articles/:article_id/comments", () => {
       })
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("Article/User not found!");
+        expect(response.body.msg).toBe("Not found!");
       });
   });
   test("POST:400 responds with an appropriate error message when provided with an invalid comment", () => {
@@ -201,10 +201,10 @@ describe("/api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Article/User not found!");
+        expect(body.msg).toBe("Not found!");
       });
   });
-  test("POST: 404, sends an appropriate error message when given an invalid article_id", () => {
+  test("POST:404, sends an appropriate error message when given an invalid article_id", () => {
     return request(app)
       .get("/api/articles/not-an-id/comments")
       .expect(400)

@@ -63,7 +63,7 @@ exports.insertCommentByArticleId = ({ body, article_id, username }) => {
   if (
     !username ||
     !body ||
-    typeof body === "number" ||
+    typeof body !== "string" ||
     typeof username === undefined
   ) {
     return Promise.reject({ status: 400, msg: "Bad request" });
