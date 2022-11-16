@@ -48,7 +48,9 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.patchArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes: newVote } = req.body;
-  updateArticle(article_id, newVote).then((article) => {
-    res.status(200).send({ article });
-  });
+  updateArticle(article_id, newVote)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
 };

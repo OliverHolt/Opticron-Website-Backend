@@ -52,7 +52,7 @@ describe("/api/articles", () => {
   });
 });
 
-describe.only("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id", () => {
   test("GET:200, responds with an array of articles matching given article_id", () => {
     return request(app)
       .get("/api/articles/1")
@@ -107,6 +107,55 @@ describe.only("/api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: 102,
         });
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when given a non-existent article_id", () => {
+    const newVote = 2;
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/99999")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when given an invalid article_id", () => {
+    const newVote = 2;
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/not-an-id")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when body is missing required fields", () => {
+    const increaseVotes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when body is incorrect data type", () => {
+    const newVote = "hello";
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });

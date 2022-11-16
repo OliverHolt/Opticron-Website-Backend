@@ -90,6 +90,9 @@ exports.updateArticle = (article_id, newVote) => {
       [article_id]
     )
     .then((res) => {
+      if (res.rows.length === 0) {
+        return Promise.reject({ status: 400, msg: "Bad request" });
+      }
       totalVoteCount = res.rows[0].votes + newVote;
       return db.query(
         "UPDATE articles SET votes = $2 WHERE article_id = $1 RETURNING*;",
