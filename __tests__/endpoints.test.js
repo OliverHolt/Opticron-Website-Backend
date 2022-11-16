@@ -167,6 +167,18 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("POST:400 responds with an appropriate error message when provided with an invalid username", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        body: "lol nice",
+        username: "Mr Nobody",
+      })
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article/User not found!");
+      });
+  });
   test("POST:400 responds with an appropriate error message when provided with an invalid comment", () => {
     return request(app)
       .post("/api/articles/1/comments")
@@ -189,7 +201,7 @@ describe("/api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("article not found!");
+        expect(body.msg).toBe("Article/User not found!");
       });
   });
   test("POST: 404, sends an appropriate error message when given an invalid article_id", () => {
