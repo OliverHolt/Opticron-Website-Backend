@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const { checkArticleExists } = require("../utils/db.js");
 
 exports.selectArticles = () => {
   return db
@@ -29,7 +30,7 @@ exports.fetchArticleById = (article_id) => {
     .query(
       `
   SELECT * FROM articles
-  WHERE article_id = $1
+  WHERE article_id = $1;
   `,
       [article_id]
     )
@@ -37,6 +38,23 @@ exports.fetchArticleById = (article_id) => {
       if (res.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article not found!" });
       }
+      return res.rows;
+    });
+};
+
+exports.fetchCommentsByArticleId = (article_id) => {
+  return checkArticleExists(article_id)
+    .then(() => {
+      return db.query(
+        `
+  SELECT * FROM comments
+  WHERE article_id = $1
+  ORDER BY created_at DESC;
+  `,
+        [article_id]
+      );
+    })
+    .then((res) => {
       return res.rows;
     });
 };
