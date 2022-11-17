@@ -114,6 +114,28 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id", () => {
+  test("GET:200, responds with an array of articles matching given article_id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.length).not.toBe(0);
+        body.article.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: 1,
+              body: expect.any(String),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              // comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
   test("GET:200, responds with an array of articles matching given article_id INCLUDING COMMENT COUNT", () => {
     return request(app)
       .get("/api/articles/1")
@@ -121,16 +143,11 @@ describe("/api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article.length).not.toBe(0);
         body.article.forEach((article) => {
-          expect(article).toMatchObject({
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: 1,
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            comment_count: expect.any(Number),
-          });
+          expect(article).toEqual(
+            expect.objectContaining({
+              comment_count: expect.any(Number),
+            })
+          );
         });
       });
   });
