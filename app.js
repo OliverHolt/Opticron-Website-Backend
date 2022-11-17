@@ -8,10 +8,13 @@ const {
   postCommentByArticleId,
   patchArticle,
 } = require("./controllers/articles.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/users", getUsers);
 
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);

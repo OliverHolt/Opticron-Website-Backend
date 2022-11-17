@@ -237,7 +237,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
-  test("POST:400 responds with an appropriate error message when provided with an invalid username", () => {
+  test("POST:404 responds with an appropriate error message when provided with an invalid username", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
@@ -274,12 +274,29 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Not found!");
       });
   });
-  test("POST:404, sends an appropriate error message when given an invalid article_id", () => {
+  test("POST:400, sends an appropriate error message when given an invalid article_id", () => {
     return request(app)
       .get("/api/articles/not-an-id/comments")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/users", () => {
+  test("GET:200, an array of objects, each of which should have a username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users).toEqual(expect.any(Array));
+        expect(response.body.users).not.toHaveLength(0);
+        response.body.users.forEach((user) => {
+          expect(Object.keys(user)).toEqual(
+            expect.arrayContaining(["username", "name", "avatar_url"])
+          );
+        });
       });
   });
 });
