@@ -50,6 +50,59 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("GET:200, array of articles is sorted by DESCENDING date (created_at) by default ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET:200, can sort articles by specified sort_by value", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=ASC")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeSortedBy("author");
+      });
+  });
+  test("GET:400, invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=nonsense")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid sort query");
+      });
+  });
+  test("GET:400, invalid order_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=nonsense")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid sort query");
+      });
+  });
+  test("GET:200, can filter articles by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles.length).toBe(1);
+        response.body.articles.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+  test("GET:400, invalid filter query", () => {
+    return request(app)
+      .get("/api/articles?topic=nonsense")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("invalid filter query");
+      });
+  });
 });
 
 describe("/api/articles/:article_id", () => {
