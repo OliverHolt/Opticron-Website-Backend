@@ -7,9 +7,16 @@ const {
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
-  selectArticles().then((articles) => {
-    res.status(200).send({ articles });
-  });
+  const { sort_by, order, topic } = req.query;
+  selectArticles(sort_by, order, topic)
+    .then((articles) => {
+      if (articles.length === 0) {
+        res.status(200).send({ msg: "No articles with this topic yet!" });
+      } else res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticleById = (req, res, next) => {
