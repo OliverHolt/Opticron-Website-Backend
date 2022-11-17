@@ -51,7 +51,7 @@ exports.fetchArticleById = (article_id) => {
   articles.topic,
   articles.created_at,
   articles.votes,
-  COUNT(comments.article_id) AS comment_count
+  CAST(COUNT(comments.article_id) AS int) AS comment_count
   FROM articles
   JOIN comments
   ON articles.article_id = comments.article_id
