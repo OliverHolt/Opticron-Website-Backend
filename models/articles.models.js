@@ -91,7 +91,7 @@ exports.updateArticle = (article_id, newVote) => {
     )
     .then((res) => {
       if (res.rows.length === 0) {
-        return Promise.reject({ status: 400, msg: "Bad request" });
+        return Promise.reject({ status: 404, msg: "Not found" });
       }
       totalVoteCount = res.rows[0].votes + newVote;
       return db.query(

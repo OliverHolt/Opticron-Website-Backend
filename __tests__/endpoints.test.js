@@ -117,9 +117,9 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .patch("/api/articles/99999")
       .send(increaseVotes)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("Not found");
       });
   });
   test("PATCH:400, sends an appropriate error message when given an invalid article_id", () => {
