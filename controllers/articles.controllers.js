@@ -10,8 +10,8 @@ exports.getArticles = (req, res, next) => {
   const { sort_by, order, topic } = req.query;
   selectArticles(sort_by, order, topic)
     .then((articles) => {
-      if (topic && articles.length === 0) {
-        res.status(400).send({ msg: "invalid filter query" });
+      if (articles.length === 0) {
+        res.status(200).send({ msg: "No articles with this topic yet!" });
       } else res.status(200).send({ articles });
     })
     .catch((err) => {

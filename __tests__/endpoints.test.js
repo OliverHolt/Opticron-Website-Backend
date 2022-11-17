@@ -95,9 +95,17 @@ describe("/api/articles", () => {
         });
       });
   });
+  test("GET:200, can filter by valid topic even if no articles exist for it", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.msg).toBe("No articles with this topic yet!");
+      });
+  });
   test("GET:400, invalid filter query", () => {
     return request(app)
-      .get("/api/articles?topic=nonsense")
+      .get("/api/articles?topic=999")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("invalid filter query");

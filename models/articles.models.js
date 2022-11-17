@@ -33,7 +33,9 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   ORDER BY articles.${sort_by} ${order};
   `;
   return db.query(queryStr, queryValues).then((result) => {
-    return result.rows;
+    if (/[^0-9]+/.test(topic) === false) {
+      return Promise.reject({ status: 400, msg: "invalid filter query" });
+    } else return result.rows;
   });
 };
 
