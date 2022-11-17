@@ -114,7 +114,7 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("GET:200, responds with an array of articles matching given article_id", () => {
+  test("GET:200, responds with an array of articles matching given article_id INCLUDING COMMENT COUNT", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -129,6 +129,7 @@ describe("/api/articles/:article_id", () => {
             topic: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
+            comment_count: expect.any(String),
           });
         });
       });
