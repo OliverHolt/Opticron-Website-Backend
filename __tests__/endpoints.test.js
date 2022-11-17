@@ -214,6 +214,23 @@ describe("/api/articles/:article_id/comments", () => {
   });
 });
 
+describe("/api/users", () => {
+  test("GET:200, an array of objects, each of which should have a username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.users).toEqual(expect.any(Array));
+        expect(response.body.users).not.toHaveLength(0);
+        response.body.users.forEach((user) => {
+          expect(Object.keys(user)).toEqual(
+            expect.arrayContaining(["username", "name", "avatar_url"])
+          );
+        });
+      });
+  });
+});
+
 describe("/api/nonsense", () => {
   test("GET:404, sends an appropriate error message when given an invalid route", () => {
     return request(app)
