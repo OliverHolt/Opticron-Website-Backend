@@ -72,7 +72,7 @@ describe("/api/articles/:article_id", () => {
         });
       });
   });
-  test("GET: 404, sends an appropriate error message when given a non-existent article_id", () => {
+  test("GET:404, sends an appropriate error message when given a non-existent article_id", () => {
     return request(app)
       .get("/api/articles/99999")
       .expect(404)
@@ -80,9 +80,79 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("article not found!");
       });
   });
-  test("GET: 400, sends an appropriate error message when given an invalid article_id", () => {
+  test("GET:400, sends an appropriate error message when given an invalid article_id", () => {
     return request(app)
       .get("/api/articles/not-an-id")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:200, should increase the votes for a given article and return the article", () => {
+    const newVote = 2;
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(increaseVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 1,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: 102,
+        });
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when given a non-existent article_id", () => {
+    const newVote = 2;
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/99999")
+      .send(increaseVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when given an invalid article_id", () => {
+    const newVote = 2;
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/not-an-id")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when body is missing required fields", () => {
+    const increaseVotes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(increaseVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400, sends an appropriate error message when body is incorrect data type", () => {
+    const newVote = "hello";
+    const increaseVotes = {
+      inc_votes: newVote,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(increaseVotes)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
