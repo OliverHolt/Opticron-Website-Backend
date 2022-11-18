@@ -6,7 +6,7 @@ https://long-pink-goat-wear.cyclic.app/
 
 ## Background
 
-The link above will take you to the backend of an API I built which will fetch news articles.
+The link above will take you to the backend of a RESTful API I built which will fetch news articles.
 
 The intention here is to mimic the building of a real world backend service (such as reddit) which will provide this information to the front end architecture.
 
