@@ -390,3 +390,25 @@ describe("/api/nonsense", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("DELETE:204, delete the specified comment", () => {
+    return request(app).delete("/api/comments/3").expect(204);
+  });
+  test("DELETE:404, responds with an appropriate error message when given a non-existent comment_id", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Unable to delete non-existent comment");
+      });
+  });
+  test("DELETE:400, responds with an appropriate error message when given a invalid comment_id", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad request");
+      });
+  });
+});
