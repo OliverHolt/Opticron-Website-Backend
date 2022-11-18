@@ -14,6 +14,10 @@ const { getEndpoints } = require("./controllers/index.js");
 
 app.use(express.json());
 
+app.get("/api/healthCheck", (req, res) => {
+  res.status(200).send({ msg: "server up and running!" });
+});
+
 app.get("/api", getEndpoints);
 
 app.get("/api/topics", getTopics);
