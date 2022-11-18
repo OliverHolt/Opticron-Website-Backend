@@ -403,7 +403,7 @@ describe("/api/comments/:comment_id", () => {
         expect(response.body.msg).toBe("Unable to delete non-existent comment");
       });
   });
-  test.only("DELETE:400, responds with an appropriate error message when given a invalid comment_id", () => {
+  test("DELETE:400, responds with an appropriate error message when given a invalid comment_id", () => {
     return request(app)
       .delete("/api/comments/not-a-comment")
       .expect(400)
