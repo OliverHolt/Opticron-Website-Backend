@@ -426,7 +426,7 @@ describe("/api/articles/:article_id/comments", () => {
           article_id: 1,
           author: expect.any(String),
           votes: expect.any(Number),
-          created_at: expect.any(String), // shouldn't this be a number?
+          created_at: expect.any(String),
         });
       });
   });

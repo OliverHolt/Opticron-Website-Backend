@@ -1,4 +1,3 @@
-const endpoints = require("../endpoints.json");
 const fs = require("fs");
 
 exports.getEndpoints = (req, res, next) => {
