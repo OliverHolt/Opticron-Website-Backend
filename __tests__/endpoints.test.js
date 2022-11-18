@@ -7,6 +7,131 @@ const allData = require("../db/data/test-data/index.js");
 beforeEach(() => seed(allData));
 afterAll(() => db.end());
 
+describe("/api", () => {
+  test("shows all the available endpoints of the api", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toMatchObject({
+          "GET /api": {
+            description:
+              "serves up a json representation of all the available endpoints of the api",
+          },
+          "GET /api/topics": {
+            description: "serves an array of all topics",
+            queries: [],
+            exampleResponse: {
+              topics: [{ slug: "football", description: "Footie!" }],
+            },
+          },
+          "GET /api/users": {
+            description: "serves an array of all users",
+            queries: [],
+            exampleResponse: {
+              users: [
+                {
+                  username: "example_username",
+                  name: "smith",
+                  avatar_url: "https://www.example.com/picture.jpg",
+                },
+              ],
+            },
+          },
+          "GET /api/articles": {
+            description: "serves an array of all articles",
+            queries: [],
+            exampleResponse: {
+              articles: [
+                {
+                  title: "Seafood substitutions are increasing",
+                  topic: "cooking",
+                  author: "weegembump",
+                  body: "Text from the article..",
+                  created_at: 1527695953341,
+                },
+              ],
+            },
+          },
+          "GET /api/articles/:article_id": {
+            description:
+              "serves an array of all articles matching a given article ID",
+            queries: ["article_id"],
+            exampleResponse: {
+              articles: [
+                {
+                  author: "weegembump",
+                  title: "Seafood substitutions are increasing",
+                  article_id: 1,
+                  body: "Text from the article..",
+                  topic: "cooking",
+                  created_at: 1527695953341,
+                  votes: 1,
+                  comment_count: 1,
+                },
+              ],
+            },
+          },
+          "PATCH /api/articles/:article_id": {
+            description: "Increases the votes for a given article",
+            queries: ["article_id", "inc_votes"],
+            exampleResponse: {
+              articles: [
+                {
+                  author: "weegembump",
+                  title: "Seafood substitutions are increasing",
+                  article_id: 1,
+                  body: "Text from the article..",
+                  topic: "cooking",
+                  created_at: 1527695953341,
+                  votes: 100,
+                  comment_count: 1,
+                },
+              ],
+            },
+          },
+          "GET /api/articles/:article_id/comments": {
+            description:
+              "serves an array of comments matching a given article ID",
+            queries: ["article_id"],
+            exampleResponse: {
+              articles: [
+                {
+                  comment_id: 1,
+                  body: "Text from the comment..",
+                  article_id: 1,
+                  author: "user",
+                  votes: 1,
+                  created_at: 1527695953341,
+                },
+              ],
+            },
+          },
+          "POST /api/articles/:article_id/comments": {
+            description: "inserts a new comment to a given article",
+            queries: ["newComment", "article_id"],
+            exampleResponse: {
+              articles: [
+                {
+                  comment_id: 1,
+                  body: "Text from the comment..",
+                  article_id: 1,
+                  author: "user",
+                  votes: 1,
+                  created_at: 1527695953341,
+                },
+              ],
+            },
+          },
+          "DELETE /api/comments/:comment_id": {
+            description: "deletes a specified comment",
+            queries: ["comment_id"],
+          },
+        });
+      });
+  });
+});
+
 describe("/api/topics", () => {
   test("GET:200, an array of topic objects, each of which should have a 'slug' and a 'description' property", () => {
     return request(app)
