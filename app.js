@@ -11,7 +11,9 @@ const {
 const { getUsers } = require("./controllers/users.controllers");
 const { deleteCommentById } = require("./controllers/comments.controllers.js");
 const { getEndpoints } = require("./controllers/index.js");
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/healthCheck", (req, res) => {
