@@ -20,7 +20,7 @@ app.get("/api/healthCheck", (req, res) => {
   res.status(200).send({ msg: "server up and running!" });
 });
 
-app.get("/api", getEndpoints);
+app.get("/api/", getEndpoints);
 
 app.get("/api/topics", getTopics);
 
