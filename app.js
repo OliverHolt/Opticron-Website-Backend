@@ -16,7 +16,7 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/healthCheck", (req, res) => {
+app.get("/api/healthy", (req, res) => {
   res.status(200).send({ msg: "server up and running!" });
 });
 
