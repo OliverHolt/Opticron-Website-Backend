@@ -4,13 +4,23 @@ const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  formatReviews,
 } = require("./utils");
 
-const seed = async ({ topicData, userData, articleData, commentData }) => {
+const seed = async ({
+  topicData,
+  userData,
+  articleData,
+  commentData,
+  reviewsData,
+  toiletData,
+}) => {
   await db.query(`DROP TABLE IF EXISTS comments;`);
   await db.query(`DROP TABLE IF EXISTS articles;`);
+  await db.query(`DROP TABLE IF EXISTS reviews;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
   await db.query(`DROP TABLE IF EXISTS topics;`);
+  await db.query(`DROP TABLE IF EXISTS toilets;`);
 
   const topicsTablePromise = db.query(`
   CREATE TABLE topics (
@@ -21,11 +31,23 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
   const usersTablePromise = db.query(`
   CREATE TABLE users (
     username VARCHAR PRIMARY KEY,
-    name VARCHAR NOT NULL,
+    name VARCHAR,
+    email VARCHAR,
     avatar_url VARCHAR
   );`);
 
-  await Promise.all([topicsTablePromise, usersTablePromise]);
+  const toiletsTablePromise = db.query(`
+  CREATE TABLE toilets (
+    toilet_id SERIAL PRIMARY KEY,
+    toilet_name VARCHAR NOT NULL, 
+    address VARCHAR NOT NULL
+  );`);
+
+  await Promise.all([
+    topicsTablePromise,
+    usersTablePromise,
+    toiletsTablePromise,
+  ]);
 
   await db.query(`
   CREATE TABLE articles (
@@ -48,6 +70,16 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
     created_at TIMESTAMP DEFAULT NOW()
   );`);
 
+  await db.query(`
+  CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    body VARCHAR,
+    toilet_id INT REFERENCES toilets(toilet_id),
+    author VARCHAR REFERENCES users(username),
+    votes INT DEFAULT 0 NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+  );`);
+
   const insertTopicsQueryStr = format(
     "INSERT INTO topics (slug, description) VALUES %L RETURNING *;",
     topicData.map(({ slug, description }) => [slug, description])
@@ -57,15 +89,24 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
     .then((result) => result.rows);
 
   const insertUsersQueryStr = format(
-    "INSERT INTO users ( username, name, avatar_url) VALUES %L RETURNING *;",
-    userData.map(({ username, name, avatar_url }) => [
+    "INSERT INTO users ( username, name, email, avatar_url) VALUES %L RETURNING *;",
+    userData.map(({ username, name, email, avatar_url }) => [
       username,
       name,
+      email,
       avatar_url,
     ])
   );
   const usersPromise = db
     .query(insertUsersQueryStr)
+    .then((result) => result.rows);
+
+  const insertToiletsQueryStr = format(
+    "INSERT INTO toilets (toilet_name, address) VALUES %L RETURNING *;",
+    toiletData.map(({ toilet_name, address }) => [toilet_name, address])
+  );
+  const toiletsPromise = await db
+    .query(insertToiletsQueryStr)
     .then((result) => result.rows);
 
   await Promise.all([topicsPromise, usersPromise]);
@@ -104,7 +145,31 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
       ]
     )
   );
-  return db.query(insertCommentsQueryStr).then((result) => result.rows);
+
+  const commentsPromise = db
+    .query(insertCommentsQueryStr)
+    .then((result) => result.rows);
+
+  await Promise.all([commentsPromise]);
+
+  const toiletIdLookup = createRef(toiletsPromise, "toilet_name", "toilet_id");
+  const formattedReviewsData = formatReviews(reviewsData, toiletIdLookup);
+
+  const insertReviewsQueryStr = format(
+    "INSERT INTO reviews (body, author, toilet_id, votes, created_at) VALUES %L RETURNING *;",
+    formattedReviewsData.map(
+      ({ body, author, toilet_id, votes = 0, created_at }) => [
+        body,
+        author,
+        toilet_id,
+        votes,
+        created_at,
+      ]
+    )
+  );
+  await Promise.all([toiletsPromise]);
+
+  return db.query(insertReviewsQueryStr).then((result) => result.rows);
 };
 
 module.exports = seed;

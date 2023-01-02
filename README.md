@@ -2,7 +2,7 @@
 
 ## Link to host
 
-https://long-pink-goat-wear.cyclic.app/api/
+https://silly-pullover-tick.cyclic.app/api/
 
 ## Background
 

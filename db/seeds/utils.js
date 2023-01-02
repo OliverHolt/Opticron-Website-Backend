@@ -20,3 +20,14 @@ exports.formatComments = (comments, idLookup) => {
     };
   });
 };
+
+exports.formatReviews = (reviews, idLookup) => {
+  return reviews.map(({ created_by, belongs_to, ...restOfComment }) => {
+    const toilet_id = idLookup[belongs_to];
+    return {
+      toilet_id,
+      author: created_by,
+      ...this.convertTimestampToDate(restOfComment),
+    };
+  });
+};
