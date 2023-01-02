@@ -12,6 +12,8 @@ const { getUsers } = require("./controllers/users.controllers");
 const { deleteCommentById } = require("./controllers/comments.controllers.js");
 const { getEndpoints } = require("./controllers/index.js");
 const cors = require("cors");
+const { getToilets } = require("./controllers/toilets.controllers");
+const { getReviews } = require("./controllers/reviews.controllers");
 
 app.use(cors());
 app.use(express.json());
@@ -22,18 +24,22 @@ app.get("/api/healthy", (req, res) => {
 
 app.get("/api/", getEndpoints);
 
-app.get("/api/topics", getTopics);
+// app.get("/api/topics", getTopics);
+
+app.get("/api/toilets", getToilets);
 
 app.get("/api/users", getUsers);
 
-app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id", getArticleById);
-app.patch("/api/articles/:article_id", patchArticle);
+app.get("/api/reviews", getReviews);
 
-app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
-app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+// app.get("/api/articles", getArticles);
+// app.get("/api/articles/:article_id", getArticleById);
+// app.patch("/api/articles/:article_id", patchArticle);
 
-app.delete("/api/comments/:comment_id", deleteCommentById);
+// app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+// app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+// app.delete("/api/comments/:comment_id", deleteCommentById);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route not found!" });
