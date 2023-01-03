@@ -12,7 +12,7 @@ const { getUsers } = require("./controllers/users.controllers");
 const { deleteCommentById } = require("./controllers/comments.controllers.js");
 const { getEndpoints } = require("./controllers/index.js");
 const cors = require("cors");
-const { getToilets } = require("./controllers/toilets.controllers");
+const { getToilets, postToilet } = require("./controllers/toilets.controllers");
 const { getReviews } = require("./controllers/reviews.controllers");
 
 app.use(cors());
@@ -27,6 +27,7 @@ app.get("/api/", getEndpoints);
 // app.get("/api/topics", getTopics);
 
 app.get("/api/toilets", getToilets);
+app.post("/api/toilets", postToilet);
 
 app.get("/api/users", getUsers);
 
