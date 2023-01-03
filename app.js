@@ -13,7 +13,11 @@ const { deleteCommentById } = require("./controllers/comments.controllers.js");
 const { getEndpoints } = require("./controllers/index.js");
 const cors = require("cors");
 const { getToilets, postToilet } = require("./controllers/toilets.controllers");
-const { getReviews } = require("./controllers/reviews.controllers");
+const {
+  getReviews,
+  getReviewsByToilet,
+  postReviewByToilet,
+} = require("./controllers/reviews.controllers");
 
 app.use(cors());
 app.use(express.json());
@@ -27,12 +31,12 @@ app.get("/api/", getEndpoints);
 // app.get("/api/topics", getTopics);
 
 app.get("/api/toilets", getToilets);
-app.post("/api/toilets", postToilet);
-
 app.get("/api/users", getUsers);
-
 app.get("/api/reviews", getReviews);
+app.get("/api/toilets/:toilet_id/reviews", getReviewsByToilet);
 
+app.post("/api/toilets", postToilet);
+app.post("/api/toilets/:toilet_id/reviews", postReviewByToilet);
 // app.get("/api/articles", getArticles);
 // app.get("/api/articles/:article_id", getArticleById);
 // app.patch("/api/articles/:article_id", patchArticle);

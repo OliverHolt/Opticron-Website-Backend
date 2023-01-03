@@ -60,6 +60,80 @@ describe("/api", () => {
   });
 });
 
+describe("/api/:toilet_id/reviews", () => {
+  test("GET:200, responds with array of reviews by toilet id", () => {
+    return request(app)
+      .get("/api/toilets/a/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+});
+
+describe("/api/toilets/:toilet_id/reviews", () => {
+  test("GET:201, responds with posted review", () => {
+    const newComment = {
+      body: "lol nice",
+      username: "test1",
+    };
+    return request(app)
+      .post("/api/toilets/b/reviews")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          review_id: expect.any(Number),
+          body: expect.any(String),
+          toilet_id: "b",
+          author: expect.any(String),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
+      });
+  });
+});
+
+describe("/api/toilets", () => {
+  test("POST:201, responds with posted toilet", () => {
+    const newToilet = {
+      place_id: "e",
+      name: "pooprscoopr",
+      formatted_address: "2 shit st",
+      business_status: "OPERATIONAL",
+    };
+    return request(app)
+      .post("/api/toilets")
+      .send(newToilet)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.toilet).toMatchObject({
+          place_id: "e",
+          name: "pooprscoopr",
+          formatted_address: "2 shit st",
+          business_status: "OPERATIONAL",
+        });
+      });
+  });
+  test("error for existing toilet", () => {
+    const newToilet = {
+      place_id: "a",
+      name: "poopr",
+      formatted_address: "1 shit st",
+      business_status: "OPERATIONAL",
+    };
+    return request(app)
+      .post("/api/toilets")
+      .send(newToilet)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Toilet already exists");
+      });
+  });
+});
+
 // describe("/api/topics", () => {
 //   test("GET:200, an array of topic objects, each of which should have a 'slug' and a 'description' property", () => {
 //     return request(app)
