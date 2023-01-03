@@ -15,6 +15,7 @@ exports.insertToilet = ({
 }) => {
   return checkToiletExists(place_id)
     .then((res) => {
+      console.log(res);
       if (res === false) {
         return db.query(
           `
@@ -23,12 +24,14 @@ exports.insertToilet = ({
           [place_id, name, formatted_address, business_status]
         );
       } else {
-        console.log("toilet already exists in database");
+        return Promise.reject({
+          status: 400,
+          msg: "Toilet already exists",
+        });
       }
     })
 
     .then((result) => {
-      console.log(result, "<<< result from toilet model");
       return result.rows[0];
     });
 };

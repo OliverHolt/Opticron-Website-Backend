@@ -10,7 +10,7 @@ exports.postToilet = (req, res, next) => {
   const newToilet = req.body;
   insertToilet(newToilet)
     .then((toilet) => {
-      console.log(toilet, "<<< shitter to be added");
+      res.status(201).send({ toilet });
     })
     .catch(next);
 };
