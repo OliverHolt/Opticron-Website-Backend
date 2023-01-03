@@ -38,9 +38,10 @@ const seed = async ({
 
   const toiletsTablePromise = db.query(`
   CREATE TABLE toilets (
-    toilet_id SERIAL PRIMARY KEY,
-    toilet_name VARCHAR NOT NULL, 
-    address VARCHAR NOT NULL
+    place_id VARCHAR PRIMARY KEY,
+    name VARCHAR NOT NULL, 
+    formatted_address VARCHAR NOT NULL,
+    business_status VARCHAR
   );`);
 
   await Promise.all([
@@ -74,7 +75,7 @@ const seed = async ({
   CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     body VARCHAR,
-    toilet_id INT REFERENCES toilets(toilet_id),
+    toilet_id VARCHAR REFERENCES toilets(place_id),
     author VARCHAR REFERENCES users(username),
     votes INT DEFAULT 0 NOT NULL,
     created_at TIMESTAMP DEFAULT NOW()
@@ -102,8 +103,13 @@ const seed = async ({
     .then((result) => result.rows);
 
   const insertToiletsQueryStr = format(
-    "INSERT INTO toilets (toilet_name, address) VALUES %L RETURNING *;",
-    toiletData.map(({ toilet_name, address }) => [toilet_name, address])
+    "INSERT INTO toilets (place_id, name, formatted_address, business_status) VALUES %L RETURNING *;",
+    toiletData.map(({ place_id, name, formatted_address, business_status }) => [
+      place_id,
+      name,
+      formatted_address,
+      business_status,
+    ])
   );
   const toiletsPromise = await db
     .query(insertToiletsQueryStr)
@@ -152,7 +158,7 @@ const seed = async ({
 
   await Promise.all([commentsPromise]);
 
-  const toiletIdLookup = createRef(toiletsPromise, "toilet_name", "toilet_id");
+  const toiletIdLookup = createRef(toiletsPromise, "name", "place_id");
   const formattedReviewsData = formatReviews(reviewsData, toiletIdLookup);
 
   const insertReviewsQueryStr = format(
