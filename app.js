@@ -8,7 +8,7 @@ const {
   postCommentByArticleId,
   patchArticle,
 } = require("./controllers/articles.controllers");
-const { getUsers } = require("./controllers/users.controllers");
+const { getUsers, postUser } = require("./controllers/users.controllers");
 const { deleteCommentById } = require("./controllers/comments.controllers.js");
 const { getEndpoints } = require("./controllers/index.js");
 const cors = require("cors");
@@ -36,6 +36,7 @@ app.get("/api/reviews", getReviews);
 app.get("/api/toilets/:toilet_id/reviews", getReviewsByToilet);
 
 app.post("/api/toilets", postToilet);
+app.post("/api/users", postUser);
 app.post("/api/toilets/:toilet_id/reviews", postReviewByToilet);
 // app.get("/api/articles", getArticles);
 // app.get("/api/articles/:article_id", getArticleById);

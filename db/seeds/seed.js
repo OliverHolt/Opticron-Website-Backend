@@ -31,9 +31,9 @@ const seed = async ({
   const usersTablePromise = db.query(`
   CREATE TABLE users (
     username VARCHAR PRIMARY KEY,
-    name VARCHAR,
     email VARCHAR,
-    avatar_url VARCHAR
+    avatar_url VARCHAR,
+    password VARCHAR
   );`);
 
   const toiletsTablePromise = db.query(`
@@ -90,12 +90,12 @@ const seed = async ({
     .then((result) => result.rows);
 
   const insertUsersQueryStr = format(
-    "INSERT INTO users ( username, name, email, avatar_url) VALUES %L RETURNING *;",
-    userData.map(({ username, name, email, avatar_url }) => [
+    "INSERT INTO users ( username, email, avatar_url, password) VALUES %L RETURNING *;",
+    userData.map(({ username, email, avatar_url, password }) => [
       username,
-      name,
       email,
       avatar_url,
+      password,
     ])
   );
   const usersPromise = db

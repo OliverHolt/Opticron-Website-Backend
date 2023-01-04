@@ -38,7 +38,6 @@ exports.insertReviewByToiletId = ({ body, toilet_id, username }) => {
     )
 
     .then((result) => {
-      console.log("hello");
       return result.rows[0];
     });
 };

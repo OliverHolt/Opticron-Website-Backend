@@ -3,6 +3,7 @@ const request = require("supertest");
 const db = require("../db/connection.js");
 const seed = require("../db/seeds/seed.js");
 const allData = require("../db/data/test-data/index.js");
+const { expect } = require("@jest/globals");
 
 beforeEach(() => seed(allData));
 afterAll(() => db.end());
@@ -133,7 +134,26 @@ describe("/api/toilets", () => {
       });
   });
 });
-
+describe("POST users", () => {
+  test("POST:201, respond with insertedUser", () => {
+    const newUser = {
+      username: "DarthShan",
+      email: "darsshan.p@gmail.com",
+      password: "password",
+    };
+    return request(app)
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .then((res) => {
+        expect(res.body).toMatchObject({
+          username: expect.any(String),
+          email: expect.any(String),
+          password: expect.any(String),
+        });
+      });
+  });
+});
 // describe("/api/topics", () => {
 //   test("GET:200, an array of topic objects, each of which should have a 'slug' and a 'description' property", () => {
 //     return request(app)
@@ -500,7 +520,12 @@ describe("/api/users", () => {
         expect(response.body.users).not.toHaveLength(0);
         response.body.users.forEach((user) => {
           expect(Object.keys(user)).toEqual(
-            expect.arrayContaining(["username", "name", "avatar_url"])
+            expect.arrayContaining([
+              "username",
+              "email",
+              "avatar_url",
+              "password",
+            ])
           );
         });
       });

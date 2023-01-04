@@ -15,7 +15,6 @@ exports.insertToilet = ({
 }) => {
   return checkToiletExists(place_id)
     .then((res) => {
-      console.log(res);
       if (res === false) {
         return db.query(
           `
