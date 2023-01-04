@@ -12,5 +12,7 @@ exports.postToilet = (req, res, next) => {
     .then((toilet) => {
       res.status(201).send({ toilet });
     })
-    .catch(next);
+    .catch((err) => {
+      console.log(err);
+    });
 };

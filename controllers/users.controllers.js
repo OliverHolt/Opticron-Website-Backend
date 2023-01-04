@@ -8,7 +8,11 @@ exports.getUsers = (req, res, next) => {
 
 exports.postUser = (req, res, next) => {
   newUser = req.body;
-  insertUser(newUser).then((insertedUser) => {
-    res.status(201).send(insertedUser);
-  });
+  insertUser(newUser)
+    .then((insertedUser) => {
+      res.status(201).send(insertedUser);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

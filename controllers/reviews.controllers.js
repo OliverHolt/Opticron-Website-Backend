@@ -29,5 +29,7 @@ exports.postReviewByToilet = (req, res, next) => {
     .then((review) => {
       res.status(201).send({ review });
     })
-    .catch(next);
+    .catch((err) => {
+      console.log(err);
+    });
 };
