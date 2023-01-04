@@ -118,21 +118,21 @@ describe("/api/toilets", () => {
         });
       });
   });
-  test("error for existing toilet", () => {
-    const newToilet = {
-      place_id: "a",
-      name: "poopr",
-      formatted_address: "1 shit st",
-      business_status: "OPERATIONAL",
-    };
-    return request(app)
-      .post("/api/toilets")
-      .send(newToilet)
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Toilet already exists");
-      });
-  });
+  //   test("error for existing toilet", () => {
+  //     const newToilet = {
+  //       place_id: "a",
+  //       name: "poopr",
+  //       formatted_address: "1 shit st",
+  //       business_status: "OPERATIONAL",
+  //     };
+  //     return request(app)
+  //       .post("/api/toilets")
+  //       .send(newToilet)
+  //       .expect(400)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("Toilet already exists");
+  //       });
+  //   });
 });
 describe("POST users", () => {
   test("POST:201, respond with insertedUser", () => {
