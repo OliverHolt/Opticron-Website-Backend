@@ -1,7 +1,7 @@
 const {
   convertTimestampToDate,
   createRef,
-  formatComments,
+  formatReviews,
 } = require("../db/seeds/utils");
 
 describe("convertTimestampToDate", () => {
@@ -74,31 +74,31 @@ describe("createRef", () => {
   });
 });
 
-describe("formatComments", () => {
+describe("formatReviews", () => {
   test("returns an empty array, if passed an empty array", () => {
-    const comments = [];
-    expect(formatComments(comments, {})).toEqual([]);
-    expect(formatComments(comments, {})).not.toBe(comments);
+    const reviews = [];
+    expect(formatReviews(reviews, {})).toEqual([]);
+    expect(formatReviews(reviews, {})).not.toBe(reviews);
   });
   test("converts created_by key to author", () => {
-    const comments = [{ created_by: "ant" }, { created_by: "bee" }];
-    const formattedComments = formatComments(comments, {});
-    expect(formattedComments[0].author).toEqual("ant");
-    expect(formattedComments[0].created_by).toBe(undefined);
-    expect(formattedComments[1].author).toEqual("bee");
-    expect(formattedComments[1].created_by).toBe(undefined);
+    const reviews = [{ created_by: "ant" }, { created_by: "bee" }];
+    const formattedReviews = formatReviews(reviews, {});
+    expect(formattedReviews[0].author).toEqual("ant");
+    expect(formattedReviews[0].created_by).toBe(undefined);
+    expect(formattedReviews[1].author).toEqual("bee");
+    expect(formattedReviews[1].created_by).toBe(undefined);
   });
   test("replaces belongs_to value with appropriate id when passed a reference object", () => {
-    const comments = [{ belongs_to: "title1" }, { belongs_to: "title2" }];
+    const reviews = [{ belongs_to: "title1" }, { belongs_to: "title2" }];
     const ref = { title1: 1, title2: 2 };
-    const formattedComments = formatComments(comments, ref);
-    expect(formattedComments[0].article_id).toBe(1);
-    expect(formattedComments[1].article_id).toBe(2);
+    const formattedReviews = formatReviews(reviews, ref);
+    expect(formattedReviews[0].toilet_id).toBe(1);
+    expect(formattedReviews[1].toilet_id).toBe(2);
   });
   test("converts created_at timestamp to a date", () => {
     const timestamp = Date.now();
-    const comments = [{ created_at: timestamp }];
-    const formattedComments = formatComments(comments, {});
-    expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+    const reviews = [{ created_at: timestamp }];
+    const formattedReviews = formatReviews(reviews, {});
+    expect(formattedReviews[0].created_at).toEqual(new Date(timestamp));
   });
 });
