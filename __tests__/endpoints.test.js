@@ -60,43 +60,68 @@ describe("/api", () => {
   });
 });
 
-describe("/api/:toilet_id/reviews", () => {
-  test("GET:200, responds with array of reviews by toilet id", () => {
+describe("/api/users", () => {
+  test("GET:200, an array of user objects with the correct properties", () => {
     return request(app)
-      .get("/api/toilets/a/reviews")
+      .get("/api/users")
       .expect(200)
-      .then(({ body }) => {
-        expect(body.reviews).toBeSortedBy("created_at", {
-          descending: true,
+      .then((response) => {
+        expect(response.body.users).toEqual(expect.any(Array));
+        expect(response.body.users).not.toHaveLength(0);
+        response.body.users.forEach((user) => {
+          expect(Object.keys(user)).toEqual(
+            expect.arrayContaining(["username", "name", "avatar_url"])
+          );
         });
       });
   });
 });
 
-describe("/api/toilets/:toilet_id/reviews", () => {
-  test("GET:201, responds with posted review", () => {
-    const newComment = {
-      body: "lol nice",
-      username: "test1",
-    };
+describe("/api/reviews", () => {
+  test("GET:200, an array of review objects with the correct properties", () => {
     return request(app)
-      .post("/api/toilets/b/reviews")
-      .send(newComment)
-      .expect(201)
-      .then(({ body }) => {
-        expect(body.review).toMatchObject({
-          review_id: expect.any(Number),
-          body: expect.any(String),
-          toilet_id: "b",
-          author: expect.any(String),
-          votes: expect.any(Number),
-          created_at: expect.any(String),
+      .get("/api/reviews")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.topics).toEqual(expect.any(Array));
+        expect(response.body.topics).not.toHaveLength(0);
+        response.body.topics.forEach((review) => {
+          expect(Object.keys(review)).toEqual(
+            expect.arrayContaining([
+              "review_id",
+              "body",
+              "toilet_id",
+              "author",
+              "votes",
+              "created_at",
+            ])
+          );
         });
       });
   });
 });
 
 describe("/api/toilets", () => {
+  test("GET:200, an array of toilet objects with the correct properties", () => {
+    return request(app)
+      .get("/api/toilets")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.topics).toEqual(expect.any(Array));
+        expect(response.body.topics).not.toHaveLength(0);
+        response.body.topics.forEach((toilet) => {
+          expect(Object.keys(toilet)).toEqual(
+            expect.arrayContaining([
+              "place_id",
+              "name",
+              "formatted_address",
+              "business_status",
+            ])
+          );
+        });
+      });
+  });
+
   test("POST:201, responds with posted toilet", () => {
     const newToilet = {
       place_id: "e",
@@ -130,6 +155,65 @@ describe("/api/toilets", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Toilet already exists");
+      });
+  });
+});
+
+describe("/api/nonsense", () => {
+  test("GET:404, sends an appropriate error message when given an invalid route", () => {
+    return request(app)
+      .get("/api/nonsense")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Route not found!");
+      });
+  });
+});
+
+describe("/api/toilets/:toilet_id/reviews", () => {
+  test("GET:200, responds with array of reviews by toilet id", () => {
+    return request(app)
+      .get("/api/toilets/a/reviews")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.reviews).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        body.reviews.forEach((review) => {
+          expect(Object.keys(review)).toEqual(
+            expect.arrayContaining([
+              "review_id",
+              "body",
+              "toilet_id",
+              "author",
+              "votes",
+              "created_at",
+            ])
+          );
+        });
+      });
+  });
+});
+
+describe("/api/toilets/:toilet_id/reviews", () => {
+  test("POST:201, responds with posted review", () => {
+    const newComment = {
+      body: "lol nice",
+      username: "test1",
+    };
+    return request(app)
+      .post("/api/toilets/b/reviews")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.review).toMatchObject({
+          review_id: expect.any(Number),
+          body: expect.any(String),
+          toilet_id: "b",
+          author: expect.any(String),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
       });
   });
 });
@@ -489,34 +573,6 @@ describe("/api/toilets", () => {
 //       });
 //   });
 // });
-
-describe("/api/users", () => {
-  test("GET:200, an array of objects, each of which should have a username, name and avatar_url", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then((response) => {
-        expect(response.body.users).toEqual(expect.any(Array));
-        expect(response.body.users).not.toHaveLength(0);
-        response.body.users.forEach((user) => {
-          expect(Object.keys(user)).toEqual(
-            expect.arrayContaining(["username", "name", "avatar_url"])
-          );
-        });
-      });
-  });
-});
-
-describe("/api/nonsense", () => {
-  test("GET:404, sends an appropriate error message when given an invalid route", () => {
-    return request(app)
-      .get("/api/nonsense")
-      .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Route not found!");
-      });
-  });
-});
 
 // describe("/api/comments/:comment_id", () => {
 //   test("DELETE:204, delete the specified comment", () => {
