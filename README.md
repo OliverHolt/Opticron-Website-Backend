@@ -1,14 +1,16 @@
-# Northcoders News API
+# NipToLoo API
 
 ## Link to host
 
-https://silly-pullover-tick.cyclic.app/api/
+https://cyan-cormorant-gear.cyclic.app/api/
 
 ## Background
 
-The link above will take you to the backend of a RESTful API I built which will fetch news articles.
+The link above will take you to the backend of NipToLoo's RESTful API. The link will show all available endpoints of the API.
 
-The intention here is to mimic the building of a real world backend service (such as reddit) which will provide this information to the front end architecture.
+NipToLoo is a mobile application to help users locate public toilets in their current location or a specified area in the UK or all over the world. We specifically designed this app for people with conditions like irritable bowel syndrome(IBS), Crohn’s disease, and parents and minders requiring a safe space to change diapers. The app will help plan their toilet breaks ahead of any trips to an unfamiliar place.
+
+For more information, please see our front-end repo here: https://github.com/AngelikaM-T/NipToLoo
 
 ## Cloning this repo
 
