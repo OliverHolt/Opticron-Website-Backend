@@ -25,8 +25,11 @@ describe("/api", () => {
             exampleResponse: {
               toilets: [
                 {
-                  toilet_name: "Public Toilet",
-                  address: "1 Main Street, London",
+                  place_id: "ChIJHU4KKBWPcUgRlC0duA5KlBA",
+                  name: "St George's Public Toilets",
+                  formatted_address:
+                    "197 Lyndale Rd, Bristol BS5 7AA, United Kingdom",
+                  business_status: "OPERATIONAL",
                 },
               ],
             },
@@ -39,6 +42,9 @@ describe("/api", () => {
                 {
                   username: "example_username",
                   email: "example@example.com",
+                  avatar_url: "https://example.com/image_source.jpg",
+                  password:
+                    "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
                 },
               ],
             },
@@ -47,11 +53,81 @@ describe("/api", () => {
             description: "serves an array of all reviews of all toilets",
             queries: [],
             exampleResponse: {
-              articles: [
+              reviews: [
                 {
-                  body: "Example review",
-                  author: "ExampleUser",
-                  created_at: 1527695953341,
+                  review_id: 1,
+                  body: "Example review here",
+                  toilet_id: "a",
+                  author: "example_username",
+                  votes: 0,
+                  created_at: "2020-05-21T23:19:00.000Z",
+                },
+              ],
+            },
+          },
+          "GET /api/toilets/:toilet_id/reviews": {
+            description: "serves an array of all reviews for a specific toilet",
+            queries: [],
+            exampleResponse: {
+              reviews: [
+                {
+                  review_id: 1,
+                  body: "Example review here",
+                  toilet_id: "a",
+                  author: "example_username",
+                  votes: 0,
+                  created_at: "2020-05-21T23:19:00.000Z",
+                },
+              ],
+            },
+          },
+          "POST /api/toilets": {
+            description: "posts a new toilet to the database",
+            queries: [
+              "place_id",
+              "name",
+              "formatted_address",
+              "business_status",
+            ],
+            exampleResponse: {
+              toilets: [
+                {
+                  place_id: "ChIJHU4KKBWPcUgRlC0duA5KlBA",
+                  name: "St George's Public Toilets",
+                  formatted_address:
+                    "197 Lyndale Rd, Bristol BS5 7AA, United Kingdom",
+                  business_status: "OPERATIONAL",
+                },
+              ],
+            },
+          },
+          "POST /api/users": {
+            description: "posts a new user to the database",
+            queries: ["username", "email", "passowrd"],
+            exampleResponse: {
+              toilets: [
+                {
+                  username: "example_username",
+                  email: "example@example.com",
+                  avatar_url: "https://example.com/image_source.jpg",
+                  password:
+                    "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824",
+                },
+              ],
+            },
+          },
+          "POST /api/toilets/:toilet_id/reviews": {
+            description: "posts a review for a specific toilet",
+            queries: ["body", "toilet_id", "username"],
+            exampleResponse: {
+              reviews: [
+                {
+                  review_id: 1,
+                  body: "Example review here",
+                  toilet_id: "a",
+                  author: "example_username",
+                  votes: 0,
+                  created_at: "2020-05-21T23:19:00.000Z",
                 },
               ],
             },
