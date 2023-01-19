@@ -1,3 +1,3 @@
-exports.userData = require("./users.js");
-exports.reviewsData = require("./reviews.js");
-exports.toiletData = require("./toilets.js");
+exports.articleData = require("./articles");
+exports.specialOffersData = require("./specialOffers");
+exports.categoryData = require("./categories");

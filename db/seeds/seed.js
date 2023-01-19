@@ -2,85 +2,96 @@ const format = require("pg-format");
 const db = require("../connection");
 const { createRef, formatReviews } = require("./utils");
 
-const seed = async ({ userData, reviewsData, toiletData }) => {
-  await db.query(`DROP TABLE IF EXISTS reviews;`);
-  await db.query(`DROP TABLE IF EXISTS toilets;`);
-  await db.query(`DROP TABLE IF EXISTS users cascade;`);
+const seed = async ({ articleData, specialOffersData, categoryData }) => {
+  // await db.query(`DROP TABLE IF EXISTS comments cascade;`);
+  await db.query(`DROP TABLE IF EXISTS articles;`);
+  await db.query(`DROP TABLE IF EXISTS specialOffers;`);
+  await db.query(`DROP TABLE IF EXISTS categories;`);
 
-  const usersTablePromise = db.query(`
-  CREATE TABLE users (
-    username VARCHAR PRIMARY KEY,
-    email VARCHAR,
-    avatar_url VARCHAR,
-    password VARCHAR
+  const articleTablePromise = db.query(`
+  CREATE TABLE articles (
+    article_id SERIAL PRIMARY KEY,
+    title VARCHAR,
+    image_url VARCHAR,
+    description VARCHAR
   );`);
 
-  const toiletsTablePromise = db.query(`
-  CREATE TABLE toilets (
-    place_id VARCHAR PRIMARY KEY,
-    name VARCHAR NOT NULL, 
-    formatted_address VARCHAR NOT NULL,
-    business_status VARCHAR
+  const specialOffersTablePromise = db.query(`
+  CREATE TABLE specialOffers (
+    offer_id SERIAL PRIMARY KEY,
+    title VARCHAR,
+    image_url VARCHAR,
+    description VARCHAR
   );`);
 
-  await Promise.all([usersTablePromise, toiletsTablePromise]);
-
-  await db.query(`
-  CREATE TABLE reviews (
-    review_id SERIAL PRIMARY KEY,
-    body VARCHAR,
-    toilet_id VARCHAR REFERENCES toilets(place_id),
-    author VARCHAR REFERENCES users(username),
-    votes INT DEFAULT 0 NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+  const categoriesTablePromise = db.query(`
+  CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR,
+    image_url VARCHAR
   );`);
 
-  const insertUsersQueryStr = format(
-    "INSERT INTO users ( username, email, avatar_url, password) VALUES %L RETURNING *;",
-    userData.map(({ username, email, avatar_url, password }) => [
-      username,
-      email,
-      avatar_url,
-      password,
+  await Promise.all([
+    articleTablePromise,
+    specialOffersTablePromise,
+    categoriesTablePromise,
+  ]);
+
+  const insertArticlesQueryStr = format(
+    "INSERT INTO articles (title, image_url, description) VALUES %L RETURNING *;",
+    articleData.map(({ title, image_url, description }) => [
+      title,
+      image_url,
+      description,
     ])
   );
-  const usersPromise = await db
-    .query(insertUsersQueryStr)
+  const articlesPromise = await db
+    .query(insertArticlesQueryStr)
     .then((result) => result.rows);
 
-  const insertToiletsQueryStr = format(
-    "INSERT INTO toilets (place_id, name, formatted_address, business_status) VALUES %L RETURNING *;",
-    toiletData.map(({ place_id, name, formatted_address, business_status }) => [
-      place_id,
-      name,
-      formatted_address,
-      business_status,
+  const insertSpecialOffersQueryStr = format(
+    "INSERT INTO specialOffers (title, image_url, description) VALUES %L RETURNING *;",
+    specialOffersData.map(({ title, image_url, description }) => [
+      title,
+      image_url,
+      description,
     ])
   );
-  const toiletsPromise = await db
-    .query(insertToiletsQueryStr)
+  const specialOffersPromise = await db
+    .query(insertSpecialOffersQueryStr)
     .then((result) => result.rows);
 
-  await Promise.all([toiletsPromise, usersPromise]);
-
-  const toiletIdLookup = createRef(toiletsPromise, "name", "place_id");
-  const formattedReviewsData = formatReviews(reviewsData, toiletIdLookup);
-
-  const insertReviewsQueryStr = format(
-    "INSERT INTO reviews (body, author, toilet_id, votes, created_at) VALUES %L RETURNING *;",
-    formattedReviewsData.map(
-      ({ body, author, toilet_id, votes = 0, created_at }) => [
-        body,
-        author,
-        toilet_id,
-        votes,
-        created_at,
-      ]
-    )
+  const insertCategoriesQueryStr = format(
+    "INSERT INTO categories (category_name, image_url) VALUES %L RETURNING *;",
+    categoryData.map(({ category_name, image_url }) => [
+      category_name,
+      image_url,
+    ])
   );
-  await Promise.all([toiletsPromise]);
+  const categoryPromise = await db
+    .query(insertCategoriesQueryStr)
+    .then((result) => result.rows);
 
-  return db.query(insertReviewsQueryStr).then((result) => result.rows);
+  await Promise.all([articlesPromise, specialOffersPromise, categoryPromise]);
+
+  // const toiletIdLookup = createRef(toiletsPromise, "name", "place_id");
+  // const formattedReviewsData = formatReviews(reviewsData, toiletIdLookup);
+
+  // const insertReviewsQueryStr = format(
+  //   "INSERT INTO reviews (body, author, toilet_id, votes, created_at) VALUES %L RETURNING *;",
+  //   formattedReviewsData.map(
+  //     ({ body, author, toilet_id, votes = 0, created_at }) => [
+  //       body,
+  //       author,
+  //       toilet_id,
+  //       votes,
+  //       created_at,
+  //     ]
+  //     )
+  //   );
+  // await Promise.all([toiletsPromise]);
+
+  // return db.query(insertReviewsQueryStr).then((result) => result.rows);
 };
 
 module.exports = seed;

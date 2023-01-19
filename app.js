@@ -1,14 +1,12 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { getUsers, postUser } = require("./controllers/users.controllers");
 const { getEndpoints } = require("./controllers/index.js");
-const { getToilets, postToilet } = require("./controllers/toilets.controllers");
 const {
-  getReviews,
-  getReviewsByToilet,
-  postReviewByToilet,
-} = require("./controllers/reviews.controllers");
+  getArticles,
+  getSpecialOffers,
+  getCategories,
+} = require("./controllers/controllers");
 
 app.use(cors());
 app.use(express.json());
@@ -18,14 +16,9 @@ app.get("/api/healthy", (req, res) => {
 });
 
 app.get("/api/", getEndpoints);
-app.get("/api/toilets", getToilets);
-app.get("/api/users", getUsers);
-app.get("/api/reviews", getReviews);
-app.get("/api/toilets/:toilet_id/reviews", getReviewsByToilet);
-
-app.post("/api/toilets", postToilet);
-app.post("/api/users", postUser);
-app.post("/api/toilets/:toilet_id/reviews", postReviewByToilet);
+app.get("/api/articles", getArticles);
+app.get("/api/specialoffers", getSpecialOffers);
+app.get("/api/categories", getCategories);
 
 app.all("*", (req, res) => {
   res.status(404).send({ msg: "Route not found!" });
